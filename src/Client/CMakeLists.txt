@@ -20,11 +20,7 @@ set(PUBLIC_INCUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}")
 
 set(PRIVATE_INCUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/private")
 
-if (ANDROID)
-    add_library(${CURRENT_PROJECT} ${SOURCE_CPP})
-else()
-    add_executable(${CURRENT_PROJECT} ${SOURCE_CPP})
-endif()
+qt_add_executable(${CURRENT_PROJECT} MANUAL_FINALIZATION ${SOURCE_CPP})
 
 target_link_libraries(${CURRENT_PROJECT} PUBLIC ${PROJECT_NAME}Core TestLvl JungleLvl AbstractLvl)
 
@@ -35,28 +31,26 @@ SET(TARGET_DIR "${CMAKE_SOURCE_DIR}/Distro")
 file(MAKE_DIRECTORY ${TARGET_DIR})
 
 if (ANDROID)
-    set(SNAKE_EXTRA_LIBS "${PROJECT_NAME}Core"
-                         TestLvl
-                         AbstractLvl
-			 JungleLvl
-                         QuasarApp
-                         QmlNotyfyService
-                         ViewSolutions)
 
-    find_package(Qt${QT_VERSION_MAJOR} COMPONENTS AndroidExtras REQUIRED)
+#    find_package(Qt${QT_VERSION_MAJOR} COMPONENTS AndroidExtras REQUIRED)
 
-    addDeployAPK(${CURRENT_PROJECT}
-                "${CMAKE_CURRENT_LIST_DIR}/android"
-                "SnakeProject"
-                "${SIGPATH}/Crawl.keystore"
-                "${SIGPASS_SNAKE}"
-                "${TARGET_DIR}"
-                "${SNAKE_EXTRA_LIBS}")
+#    addDeployAPK(${CURRENT_PROJECT}
+#                "${CMAKE_CURRENT_LIST_DIR}/android"
+#                "SnakeProject"
+#                "${SIGPATH}/Crawl.keystore"
+#                "${SIGPASS_SNAKE}"
+#                "${TARGET_DIR}"
+#                "${SNAKE_EXTRA_LIBS}")
 
-    target_link_libraries(${CURRENT_PROJECT} PRIVATE Qt${QT_VERSION_MAJOR}::AndroidExtras)
+#    target_link_libraries(${CURRENT_PROJECT} PRIVATE Qt${QT_VERSION_MAJOR}::AndroidExtras)
 
     file(GLOB java_files
        "android/src/com/quasarapp/androidtools/*.java"
+       "android/*.xml"
+       "android/*.gradle"
+       "android/gradlew"
+       "android/gradle.*"
+
     )
 
     add_custom_target(${name}Android
@@ -68,7 +62,6 @@ else()
     addDeployFromCustomFile("Crawl"
                             "${CMAKE_CURRENT_SOURCE_DIR}/../../Deploy/Crawl.json")
 endif()
-
 
 if(QT_VERSION_MAJOR EQUAL 6)
     qt_import_qml_plugins(${CURRENT_PROJECT})
